@@ -43,6 +43,8 @@ void profOcupados();
 
 void profOcupados(){
 	int i=0;
+	// conta a quantidade de professores alocados em escolas, 
+	// caso exista um professor não alocado a função irá indicar
 	for (std::list<professor>::iterator it2=professores.begin(); it2 != professores.end(); ++it2){
 		if(it2->status == ALOCADO){
 			i = i+1;
@@ -78,6 +80,7 @@ int preencherGrafo() {
 
         if (tokens) {
 
+        	//adicionar as primeiras 100 linhas como professores
             if(j<100){
               professor novoProfessor;
               novoProfessor.nome = *(tokens);
@@ -89,6 +92,8 @@ int preencherGrafo() {
                   novoProfessor.preferencias.push_back(escolaPreferida);
               }
               professores.push_back(novoProfessor);
+
+            // as linhas seguintes serão consideradas escolas
             }else{
               escola novaEscola;
               novaEscola.nome = *(tokens);
@@ -158,15 +163,19 @@ char **str_split(char *a_str, const char a_delim) {
 }
 
 void emparelhar(){
+	// enquanto existirem escolas com vaga
 	while(escolasComVaga()){
 		std::list<struct esc>::iterator auxEscola;
+
+		//escolher uma escola
 		for (std::list<struct esc>::iterator it2=escolas.begin(); it2 != escolas.end(); ++it2){
 	    	if(it2->professores.size()<2){
 	    		auxEscola = it2;
 	    		break;
 	    	}
 	    }
-	    printf("While - %s\n", auxEscola->nome);
+
+	    //  encontrar professor livre para essa escola
 	    int i,sair=0;
 	    for (i=0;i<professores.size();i++){
 	    	if (professores.empty()){
@@ -191,6 +200,8 @@ void emparelhar(){
 				}
 	    	}
 		}
+
+		// caso não exista professor livre possível para essa escola, remanejar de outra escola
 		if (!sair){
 			for (i=0;i<professores.size();i++){
 		    	if (professores.empty()){
@@ -220,6 +231,7 @@ void emparelhar(){
 }
 
 void removerProfessorDeEscola(char * prof){
+	//remover o professor passado da escola que está vinculado
 	for (std::list<struct esc>::iterator it2=escolas.begin(); it2 != escolas.end(); ++it2){
     	if(it2->professores.size()==1){
     		if(strcmp(it2->professores.front().nome,prof)==0){
@@ -236,6 +248,7 @@ void removerProfessorDeEscola(char * prof){
 }
 
 int escolasComVaga(){
+	//verifica se ainda existe alguma escola com vaga
 	for (std::list<struct esc>::iterator it2=escolas.begin(); it2 != escolas.end(); ++it2){
     	if(it2->professores.size()<2){
     		return 1;
@@ -245,6 +258,7 @@ int escolasComVaga(){
 }
 
 void imprimir(){
+	//imprime grafo de alocações por escola
     for (std::list<struct esc>::iterator it2=escolas.begin(); it2 != escolas.end(); ++it2){
     	printf("\tEscola %s\n", it2->nome);
     	printf("\t\tProfessores\n\t\t%s\n\t\t%s\n",it2->professores.front().nome,it2->professores.back().nome);
@@ -255,6 +269,7 @@ void imprimir(){
 }
 
 void imprimirSteps(){
+	// imprime grafo de alocação por escola, passo-a-passo
 	for (std::list<struct esc>::iterator it2=escolas.begin(); it2 != escolas.end(); ++it2){
     	printf("\tEscola %s\n", it2->nome);
     	printf("\t\tProfessores\n\t\t%s\n\t\t%s\n\tPressione uma tecla para continuar.\n",it2->professores.front().nome,it2->professores.back().nome);
