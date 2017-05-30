@@ -50,8 +50,7 @@ void profOcupados(){
 			printf("LIVRE = %s\n", it2->nome);
 		}
 	}
-	printf("Nprof = %d\n",professores.size());
-	printf("\t%d\n\tPressione uma tecla para retornar ao menu",i );
+	printf("\t%d professores alocados em 50 escolas\n\tPressione uma tecla para retornar ao menu",i );
 	getchar();
 	getchar();
 }
@@ -218,9 +217,6 @@ void emparelhar(){
 		}
 
 	}
-	printf("\tEmparelhamento concluído, pressione uma tecla para voltar ao menu\n");
-	getchar();
-	getchar();
 }
 
 void removerProfessorDeEscola(char * prof){
@@ -253,6 +249,7 @@ void imprimir(){
     	printf("\tEscola %s\n", it2->nome);
     	printf("\t\tProfessores\n\t\t%s\n\t\t%s\n",it2->professores.front().nome,it2->professores.back().nome);
     }
+    printf("\tPressione qualquer tecla para voltar ao menu\n");
     getchar();
     getchar();
 }
@@ -276,11 +273,10 @@ void menu() {
         printf("\t=====================================================\n");
         printf("\t========== Curso: CIÊNCIA DA COMPUTAÇÃO =============\n");
         printf("\t=====================================================\n");
-        printf("\t============= 1) Emparelhamento         =============\n");
-        printf("\t============= 2) imprimir Grafo         =============\n");
-        printf("\t============= 3) imprimir Passo a Passo =============\n");
-        printf("\t============= 4) Num Prof Ocupados      =============\n");
-        printf("\t============= 5) Sair                   =============\n");
+        printf("\t============= 1) imprimir Grafo         =============\n");
+        printf("\t============= 2) imprimir Passo a Passo =============\n");
+        printf("\t============= 3) Num Prof Ocupados      =============\n");
+        printf("\t============= 4) Sair                   =============\n");
         printf("\t=====================================================\n");
         printf("\t=====================================================\n");
         printf("\t=====================================================\n\t>>>");
@@ -288,21 +284,17 @@ void menu() {
         switch (opt) {
             case 1:
                 system("clear||cls");
-                emparelhar();
+                imprimir();
                 break;
             case 2:
                 system("clear||cls");
-                imprimir();
+                imprimirSteps();
                 break;
             case 3:
                 system("clear||cls");
-                imprimirSteps();
-                break;
-            case 4:
-                system("clear||cls");
                 profOcupados();
                 break;
-            case 5:
+            case 4:
                 system("clear||cls");
                 escape = 0;
                 break;
@@ -314,6 +306,7 @@ void menu() {
 
 int main() {
   preencherGrafo();
+  emparelhar();
   menu();
 
   return 0;
