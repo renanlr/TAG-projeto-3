@@ -9,6 +9,9 @@
 #include <string.h>
 #include <assert.h>
 
+#define LIVRE 0
+#define ALOCADO 1 
+
 using namespace std;
 
 typedef struct esc {
@@ -21,6 +24,7 @@ typedef struct prof {
     char *nome;
     std::list<escola> preferencias;
     char *habilitacao;
+    int status;
 } professor;
 
 std::list<professor> professores;
@@ -34,6 +38,23 @@ void menu();
 void imprimir();
 void emparelhar();
 int escolasComVaga();
+void removerProfessorDeEscola(char * prof);
+void profOcupados();
+
+void profOcupados(){
+	int i=0;
+	for (std::list<professor>::iterator it2=professores.begin(); it2 != professores.end(); ++it2){
+		if(it2->status == ALOCADO){
+			i = i+1;
+		}else {
+			printf("LIVRE = %s\n", it2->nome);
+		}
+	}
+	printf("Nprof = %d\n",professores.size());
+	printf("\t%d\n\tPressione uma tecla para retornar ao menu",i );
+	getchar();
+	getchar();
+}
 
 int preencherGrafo() {
     FILE *fp;
@@ -62,6 +83,7 @@ int preencherGrafo() {
               professor novoProfessor;
               novoProfessor.nome = *(tokens);
               novoProfessor.habilitacao = *(tokens + 1);
+              novoProfessor.status = LIVRE;
               for (i = 2; *(tokens + i); i++) {
                   escola escolaPreferida;
                   escolaPreferida.nome = *(tokens + i);
@@ -145,32 +167,72 @@ void emparelhar(){
 	    		break;
 	    	}
 	    }
-	    //printf("While - %s\n", auxEscola->nome);
+	    printf("While - %s\n", auxEscola->nome);
 	    int i,sair=0;
-	    for (i=0;i<100;i++){
+	    for (i=0;i<professores.size();i++){
 	    	if (professores.empty()){
 	    		break;
 	    	} else {
 		    	professor prof = professores.front();
-		    	for (std::list<escola>::iterator preferencia=prof.preferencias.begin(); preferencia != prof.preferencias.end(); ++preferencia){
-					if (strcmp(auxEscola->nome,preferencia->nome)==0){
-						//printf("Escola %s contratou %s\n",auxEscola->nome, prof.nome );
-						auxEscola->professores.push_back(prof);
-						sair = 1;
-						break;
+		    	if (prof.status == LIVRE){
+			    	for (std::list<escola>::iterator preferencia=prof.preferencias.begin(); preferencia != prof.preferencias.end(); ++preferencia){
+						if ((strcmp(auxEscola->nome,preferencia->nome)==0)){
+							printf("Escola %s contratou %s\n",auxEscola->nome, prof.nome );
+							auxEscola->professores.push_back(prof);
+							prof.status = ALOCADO;
+							sair = 1;
+							break;
+						}
 					}
-				}
+		    	}
 				professores.push_back(prof);
 				professores.pop_front();
-	    	}
-	    	if(sair){
-	    		break;
+				if(sair){
+					break;
+				}
 	    	}
 		}
+		if (!sair){
+			for (i=0;i<professores.size();i++){
+		    	if (professores.empty()){
+		    		break;
+		    	} else {
+			    	professor prof = professores.front();
+				    	for (std::list<escola>::iterator preferencia=prof.preferencias.begin(); preferencia != prof.preferencias.end(); ++preferencia){
+							if ((strcmp(auxEscola->nome,preferencia->nome)==0)){
+								removerProfessorDeEscola(prof.nome);
+								printf("Escola %s contratou %s\n",auxEscola->nome, prof.nome );
+								auxEscola->professores.push_back(prof);
+								prof.status = ALOCADO;
+								sair = 1;
+								break;
+							}
+						}
+					professores.push_back(prof);
+					professores.pop_front();
+					if(sair){
+						break;
+					}
+		    	}
+			}
+		}
+
 	}
 	printf("\tEmparelhamento concluído, pressione uma tecla para voltar ao menu\n");
 	getchar();
 	getchar();
+}
+
+void removerProfessorDeEscola(char * prof){
+	for (std::list<struct esc>::iterator it2=escolas.begin(); it2 != escolas.end(); ++it2){
+    	if(it2->professores.size()==2){
+    		if(strcmp(it2->professores.front().nome,prof)==0){
+    			it2->professores.pop_front();
+    		}else if(strcmp(it2->professores.back().nome,prof)==0){
+    			it2->professores.pop_back();
+    		}
+    	}
+    }
 }
 
 int escolasComVaga(){
@@ -213,7 +275,8 @@ void menu() {
         printf("\t============= 1) Emparelhamento         =============\n");
         printf("\t============= 2) imprimir Grafo         =============\n");
         printf("\t============= 3) imprimir Passo a Passo =============\n");
-        printf("\t============= 4) Sair                   =============\n");
+        printf("\t============= 4) Num Prof Ocupados      =============\n");
+        printf("\t============= 5) Sair                   =============\n");
         printf("\t=====================================================\n");
         printf("\t=====================================================\n");
         printf("\t=====================================================\n\t>>>");
@@ -232,6 +295,10 @@ void menu() {
                 imprimirSteps();
                 break;
             case 4:
+                system("clear||cls");
+                profOcupados();
+                break;
+            case 5:
                 system("clear||cls");
                 escape = 0;
                 break;
