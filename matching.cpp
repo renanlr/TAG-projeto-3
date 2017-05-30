@@ -225,7 +225,11 @@ void emparelhar(){
 
 void removerProfessorDeEscola(char * prof){
 	for (std::list<struct esc>::iterator it2=escolas.begin(); it2 != escolas.end(); ++it2){
-    	if(it2->professores.size()==2){
+    	if(it2->professores.size()==1){
+    		if(strcmp(it2->professores.front().nome,prof)==0){
+    			it2->professores.pop_front();
+    		}
+    	}else if(it2->professores.size()==2){
     		if(strcmp(it2->professores.front().nome,prof)==0){
     			it2->professores.pop_front();
     		}else if(strcmp(it2->professores.back().nome,prof)==0){
